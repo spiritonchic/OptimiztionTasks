@@ -10,6 +10,7 @@ for file in os.listdir("input"):
         n = len(z)
         m = len(b)
         bz = 0
+        basics = [n + i for i in range(m)]
     while True:
         for i in range(m):
             for j in range(m):
@@ -27,6 +28,7 @@ for file in os.listdir("input"):
         for i in range(m):
             if ratio[i] > 0 and (ratio[i] < ratio[ind2] or ind2 == -1):
                 ind2 = i
+        basics[ind2] = ind1
         d = A[ind2][ind1]
         for i in range(n + m):
             A[ind2][i] /= d
@@ -48,4 +50,9 @@ for file in os.listdir("input"):
         if flag:
             f.write("The method is not applicable!")
         else:
-            f.write(str(bz))
+            sol = [0 for i in range(n + m)]
+            for ind, value in enumerate(basics):
+                sol[value] = b[ind]
+            f.write(" ".join(map(lambda x: str(round(x, 6)), sol[:n])))
+            f.write("\n")
+            f.write(str(round(bz, 6)))
