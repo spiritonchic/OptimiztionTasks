@@ -1,4 +1,3 @@
-from pprint import pprint
 flag = False
 with open('input.txt', 'r') as f:
     strs = f.read().strip().split("\n")
