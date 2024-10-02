@@ -53,6 +53,6 @@ for file in os.listdir("input"):
             sol = [0 for i in range(n + m)]
             for ind, value in enumerate(basics):
                 sol[value] = b[ind]
-            f.write(" ".join(map(lambda x: str(round(x, 6)), sol[:n])))
+            f.write(" ".join(map(lambda x: str(round(x, 5)), sol[:n])))
             f.write("\n")
-            f.write(str(round(bz, 6)))
+            f.write(str(round(bz, 5)))
