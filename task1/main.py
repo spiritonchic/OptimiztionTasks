@@ -11,11 +11,11 @@ for file in os.listdir("input"):
         m = len(b)
         bz = 0
         basics = [n + i for i in range(m)]
+    for i in range(m):
+        for j in range(m):
+            A[i].append(1 if i == j else 0)
+        z.append(0)
     while True:
-        for i in range(m):
-            for j in range(m):
-                A[i].append(1 if i == j else 0)
-            z.append(0)
         mini = min(z)
         if mini >= 0:
             break
