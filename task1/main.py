@@ -1,16 +1,15 @@
 import os
-for file in os.listdir("input"):
+
+
+def simplex_method(C, A, b, eps=0.00001):
+    A = A.copy()
     flag = False
-    with open(f'input/{file}', 'r') as f:
-        strs = f.read().strip().split("\n")
-        z = list(map(lambda x: -float(x), strs[0].strip().split()))
-        A = [list(map(float, s.strip().split())) for s in strs[1:-2]]
-        b = list(map(float, strs[-2].strip().split()))
-        eps = float(strs[-1])
-        n = len(z)
-        m = len(b)
-        bz = 0
-        basics = [n + i for i in range(m)]
+    z = list(map(lambda x: -float(x), C))
+    eps = float(strs[-1])
+    n = len(z)
+    m = len(b)
+    bz = 0
+    basics = [n + i for i in range(m)]
     for i in range(m):
         for j in range(m):
             A[i].append(1 if i == j else 0)
@@ -46,13 +45,27 @@ for file in os.listdir("input"):
         bz -= b[ind2] * d
         if abs(b[ind2] * d) < eps:
             break
+    if flag:
+        return False, [], 0
+    else:
+        sol = [0 for _ in range(n + m)]
+        for ind, value in enumerate(basics):
+            sol[value] = b[ind]
+        return True, sol[:n], bz
+
+
+for file in os.listdir("input"):
+    with open(f'input/{file}', 'r') as f:
+        strs = f.read().strip().split("\n")
+        C0 = strs[0].strip().split()
+        A0 = [list(map(float, s.strip().split())) for s in strs[1:-2]]
+        b0 = list(map(float, strs[-2].strip().split()))
+        eps0 = float(strs[-1])
+        res = simplex_method(C0, A0, b0, eps0)
     with open(f'output/{file.strip(".txt")}.txt', 'w') as f:
-        if flag:
+        if not res[0]:
             f.write("The method is not applicable!")
         else:
-            sol = [0 for i in range(n + m)]
-            for ind, value in enumerate(basics):
-                sol[value] = b[ind]
-            f.write(" ".join(map(lambda x: str(round(x, 5)), sol[:n])))
+            f.write(" ".join(map(lambda x: str(round(x, 5)), res[1])))
             f.write("\n")
-            f.write(str(round(bz, 5)))
+            f.write(str(round(res[2], 5)))
