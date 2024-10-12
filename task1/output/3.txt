@@ -1,1 +1,7 @@
+Max: z = 7 * x1 + 8 * x2
+
+Subject to the constraints:
+1.0 * x1 - 2.0 * x2 <= 7.0
+3.0 * x1 - 5.0 * x2 <= 10.0
+
 The method is not applicable!
