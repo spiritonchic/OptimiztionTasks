@@ -4,7 +4,7 @@ from copy import deepcopy
 
 
 
-def interior_point(C0, A0, b0, X0, f, eps0, alpha, max_iterations=1000):
+def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
     X = X0
     if any(x < 0 for x in X):
         return "The method is not applicable!", [], 0
@@ -211,7 +211,7 @@ for file in os.listdir('input'):
         alpha = float(strs[-2])
         eps0 = float(strs[-1])
     with open(f'output/{file.strip(".txt")}.txt', 'w') as f:
-        res = interior_point(C0, A0, b0, X0, f, eps0, alpha)
+        res = interior_point(C0, A0, b0, X0, eps0, alpha)
         if res[0] != "Solved!":
             f.write(res[0])
         else:
