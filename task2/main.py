@@ -20,6 +20,8 @@ def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
         C_hat = multiply_matrix_by_vector(D, C)
 
         P = calculate_P_matrix(A_hat)
+        if P is None:
+            return "The method is not acceptable", [], 0
         Cp = multiply_matrix_by_vector(P, C_hat)
         if not contains_negative(Cp):
             return "Solved!", X, sum(multiply_vector_by_vector(C0, X))
@@ -116,6 +118,8 @@ def multiply_vector_by_vector(vector1, vector2):
 def calculate_P_matrix(A):
     t1 = multiply_two_matrices(A, transpose_matrix(A))
     t2 = inverse_matrix(t1)
+    if t2 is None:
+        return None
     t3 = multiply_two_matrices(transpose_matrix(A), t2)
     t4 = multiply_two_matrices(t3, A)
     t5 = subtract_matrices(identity_matrix(len(t4)), t4)
@@ -137,6 +141,8 @@ def inverse_matrix(matrix):
 
     # Perform Gauss-Jordan elimination
     for i in range(n):
+        if matrix[i][i] == 0:
+            return None
         # Make the diagonal contain all 1's
         factor = matrix[i][i]
         for j in range(2 * n):
