@@ -2,16 +2,14 @@ import os
 from copy import deepcopy
 
 
-
-
 def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
     X = X0
-    if any(x < 0 for x in X):
+    if any(x <= 0 for x in X):
         return "The method is not applicable!", [], 0
-
 
     for _ in range(max_iterations):
         xi = X
+        resulti = multiply_vector_by_vector(C0, X)
         D = fill_D_matrix(X)
         A = fill_A_matrix(A0)
         C = fill_C_matrix(C0, X)
@@ -23,18 +21,15 @@ def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
         if P is None:
             return "The method is not applicable", [], 0
         Cp = multiply_matrix_by_vector(P, C_hat)
-        if not contains_negative(Cp):
-            return "Solved!", X, multiply_vector_by_vector(C0, X)
         v = abs(min(Cp))
-        if v < eps0:
-            return "Solved!", X, multiply_vector_by_vector(C0, X)
 
-        t1 = multiply_vector_by_number(Cp,alpha/v)
+        t1 = multiply_vector_by_number(Cp, alpha / v)
         X_hat = sum_vectors(identity_vector(len(Cp)), t1)
 
         X = multiply_matrix_by_vector(D, X_hat)
-        if xi == X:
-            return "Solved!", X, multiply_vector_by_vector(C0, X)
+        result = multiply_vector_by_vector(C0, X)
+        if xi == X or result - resulti < eps0:
+            return "Solved!", X, result
     return "The problem does not have solution!", [], 0
 
 
@@ -45,6 +40,7 @@ def fill_D_matrix(X0):
         D[i][i] = X0[i]
     return D
 
+
 def fill_A_matrix(A):
     A = deepcopy(A)
     for i in range(len(A)):
@@ -52,10 +48,12 @@ def fill_A_matrix(A):
             A[i].append(1 if i == j else 0)
     return A
 
+
 def fill_C_matrix(C0, X):
     for i in range(len(C0), len(X)):
         C0.append(0)
     return C0
+
 
 def multiply_two_matrices(A, B):
     # Get the number of rows and columns for the resulting matrix
@@ -72,6 +70,7 @@ def multiply_two_matrices(A, B):
                 result[i][j] += A[i][k] * B[k][j]
     return result
 
+
 def multiply_matrix_by_vector(matrix, vector):
     # Get the number of rows in the matrix
     rows = len(matrix)
@@ -86,16 +85,17 @@ def multiply_matrix_by_vector(matrix, vector):
 
     return result
 
-def multiply_vector_by_vector(vector1, vector2):
 
+def multiply_vector_by_vector(vector1, vector2):
     # Initialize the resulting vector
-    result = [0 for _ in range(len(vector1))]
+    result = 0
 
     # Perform element-wise multiplication
     for i in range(len(vector1)):
-        result[i] = vector1[i] * vector2[i]
+        result += vector1[i] * vector2[i]
 
-    return sum(result)
+    return result
+
 
 def calculate_P_matrix(A):
     t1 = multiply_two_matrices(A, transpose_matrix(A))
@@ -106,14 +106,18 @@ def calculate_P_matrix(A):
     t4 = multiply_two_matrices(t3, A)
     t5 = subtract_matrices(identity_matrix(len(t4)), t4)
     return t5
+
+
 def identity_matrix(dim):
     return [[1 if i == j else 0 for j in range(dim)] for i in range(dim)]
+
 
 def transpose_matrix(matrix):
     return [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
 
+
 def inverse_matrix(m):
-    matrix = m
+    matrix = deepcopy(m)
     n = len(matrix)
     # Create an identity matrix of the same size
     identity = identity_matrix(n)
@@ -142,6 +146,7 @@ def inverse_matrix(m):
     inverse = [row[n:] for row in matrix]
     return inverse
 
+
 def subtract_matrices(A, B):
     # Get the number of rows and columns
     rows = len(A)
@@ -157,6 +162,7 @@ def subtract_matrices(A, B):
 
     return result
 
+
 def multiply_vector_by_number(vector, number):
     # Initialize the resulting vector
     result = [0 for _ in range(len(vector))]
@@ -167,8 +173,10 @@ def multiply_vector_by_number(vector, number):
 
     return result
 
+
 def identity_vector(dim):
-    return [1]*dim
+    return [1] * dim
+
 
 def sum_vectors(vector1, vector2):
     # Initialize the resulting vector
@@ -180,11 +188,13 @@ def sum_vectors(vector1, vector2):
 
     return result
 
+
 def contains_negative(A):
     for i in A:
         if i < 0:
             return True
     return False
+
 
 for file in os.listdir('input'):
     with open(f'input/{file}', 'r') as f:
@@ -193,9 +203,9 @@ for file in os.listdir('input'):
         C0 = list(map(float, strs[1].strip().split()))
         equat_number = int(strs[2])
         A0 = []
-        for i in range(3, equat_number+3):
+        for i in range(3, equat_number + 3):
             A0.append(list(map(float, strs[i].strip().split())))
-        b0 = list(map(float, strs[equat_number+3].strip().split()))
+        b0 = list(map(float, strs[equat_number + 3].strip().split()))
         X0 = list(map(float, strs[-3].strip().split()))
         alpha = float(strs[-2])
         eps0 = float(strs[-1])
@@ -204,8 +214,8 @@ for file in os.listdir('input'):
         if res[0] != "Solved!":
             f.write(res[0])
         else:
-            x = list(map(lambda x: str(round(x, 5)), res[1]))
+            x = list(map(lambda x: str(round(x, 4)), res[1]))
             f.write("Solution:\n")
             f.write(", ".join([f"x{i + 1} = {x[i]}" for i in range(len(x))]))
             f.write("\nz = ")
-            f.write(str(round(res[2], 5)))
+            f.write(str(round(res[2], 4)))
