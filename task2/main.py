@@ -21,7 +21,7 @@ def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
 
         P = calculate_P_matrix(A_hat)
         if P is None:
-            return "The method is not acceptable", [], 0
+            return "The method is not applicable", [], 0
         Cp = multiply_matrix_by_vector(P, C_hat)
         if not contains_negative(Cp):
             return "Solved!", X, sum(multiply_vector_by_vector(C0, X))
@@ -38,21 +38,6 @@ def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
     return "The problem does not have solution!", [], 0
 
 
-
-
-
-
-
-
-
-def initial_solution_with_slack(A, b, X0):
-    # Calculate initial slack variables
-    slack_variables = [b[i] - sum(A[i][j] * X0[j] for j in range(len(X0))) for i in range(len(b))]
-    # Combine initial solution and slack variables
-    initial_solution = X0 + slack_variables
-    return initial_solution
-
-
 def fill_D_matrix(X0):
     D = []
     for i in range(len(X0)):
@@ -60,7 +45,7 @@ def fill_D_matrix(X0):
         D[i][i] = X0[i]
     return D
 
-def fill_A_matrix(A, b):
+def fill_A_matrix(A):
     A = deepcopy(A)
     for i in range(len(A)):
         for j in range(len(A)):
@@ -102,9 +87,6 @@ def multiply_matrix_by_vector(matrix, vector):
     return result
 
 def multiply_vector_by_vector(vector1, vector2):
-    # Ensure both vectors are of the same length
-    if len(vector1) != len(vector2):
-        raise ValueError("Vectors must be of the same length")
 
     # Initialize the resulting vector
     result = [0 for _ in range(len(vector1))]
@@ -130,7 +112,8 @@ def identity_matrix(dim):
 def transpose_matrix(matrix):
     return [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
 
-def inverse_matrix(matrix):
+def inverse_matrix(m):
+    matrix = m
     n = len(matrix)
     # Create an identity matrix of the same size
     identity = identity_matrix(n)
