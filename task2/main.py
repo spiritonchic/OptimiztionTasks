@@ -13,7 +13,7 @@ def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
     for _ in range(max_iterations):
         xi = X
         D = fill_D_matrix(X)
-        A = fill_A_matrix(A0, b0)
+        A = fill_A_matrix(A0)
         C = fill_C_matrix(C0, X)
 
         A_hat = multiply_two_matrices(A, D)
@@ -24,17 +24,17 @@ def interior_point(C0, A0, b0, X0, eps0, alpha, max_iterations=1000):
             return "The method is not applicable", [], 0
         Cp = multiply_matrix_by_vector(P, C_hat)
         if not contains_negative(Cp):
-            return "Solved!", X, sum(multiply_vector_by_vector(C0, X))
+            return "Solved!", X, multiply_vector_by_vector(C0, X)
         v = abs(min(Cp))
         if v < eps0:
-            return "Solved!", X, sum(multiply_vector_by_vector(C0, X))
+            return "Solved!", X, multiply_vector_by_vector(C0, X)
 
         t1 = multiply_vector_by_number(Cp,alpha/v)
         X_hat = sum_vectors(identity_vector(len(Cp)), t1)
 
         X = multiply_matrix_by_vector(D, X_hat)
         if xi == X:
-            return "Solved!", X, sum(multiply_vector_by_vector(C0, X))
+            return "Solved!", X, multiply_vector_by_vector(C0, X)
     return "The problem does not have solution!", [], 0
 
 
@@ -95,7 +95,7 @@ def multiply_vector_by_vector(vector1, vector2):
     for i in range(len(vector1)):
         result[i] = vector1[i] * vector2[i]
 
-    return result
+    return sum(result)
 
 def calculate_P_matrix(A):
     t1 = multiply_two_matrices(A, transpose_matrix(A))
