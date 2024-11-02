@@ -214,8 +214,8 @@ for file in os.listdir('input'):
         if res[0] != "Solved!":
             f.write(res[0])
         else:
-            x = list(map(lambda x: str(round(x, 4)), res[1]))
+            x = list(map(lambda x: str(round(x, 5)), res[1]))
             f.write("Solution:\n")
             f.write(", ".join([f"x{i + 1} = {x[i]}" for i in range(len(x))]))
             f.write("\nz = ")
-            f.write(str(round(res[2], 4)))
+            f.write(str(round(res[2], 5)))
