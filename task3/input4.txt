@@ -1,0 +1,10 @@
+# Supply
+20 30 25
+
+# Demand
+10 15 20
+
+# Cost Matrix
+2 3 1 4
+3 3 2 2
+4 2 5 9
